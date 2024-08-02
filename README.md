@@ -1,0 +1,558 @@
+# MWform
+## プラグイン
+- MW WP Form バージョン5.0.6
+- reCAPTCHA for MW WP Form　バージョン 1.1.2
+
+## コンテンツ
+
+
+## function.php
+```
+/*-------------------------------------------*/
+//日付ピッカー　土日設定　土曜・日曜に関しては、適用するかどうかコメントアウト等で調整お願いします。
+//※非活性と記述しているところになります
+/*-------------------------------------------*/
+// 必要に応じてコメントアウトを外す
+
+function custom_date_picker() {
+    if(is_page('contact')) {
+    ?>
+        <script>
+            jQuery(function(){
+                let holiday = [];
+                let currentDate = "";
+                jQuery.get('https://holidays-jp.github.io/api/v1/date.json', function(holidaysData) {
+                    jQuery(".hasDatepicker").datepicker("option","beforeShowDay",function(date) {
+
+                        // 土曜を非活性
+                        if(date.getDay() === 6){
+                            return [false, ''];
+                        }
+
+                        // 日曜を非活性
+                        if(date.getDay() === 0){
+                            return [false, ''];
+                        }
+
+                        // 祝日を非活性
+                        jQuery.each(holidaysData, function(index, value) {
+                            holiday.push(index.replace(/-/g,''));
+                        })
+                        currentDate = date.getFullYear() + ('0'+(date.getMonth()+1)).slice(-2)+('0'+date.getDate()).slice(-2);
+                        
+                        if( holiday.indexOf(currentDate) !== -1 ) {
+                            return [false, ''];
+                        }
+                        return [true, ''];
+                    });
+                });
+            });
+        </script>
+<?php
+    }
+}
+
+add_action('lightning_entry_body_apppend', 'custom_date_picker');
+```
+```
+/*-------------------------------------------*/
+/* MW WP Form 問い合わせデータ並び替え
+/*-------------------------------------------*/
+/**
+* カラムを並び替える、削除する
+*
+* @param array $columns カラム名の配列
+* @return array
+*/
+/*function my_mwform_inquiry_data_columns( $columns ) {
+// 設定している項目順に表示させる設定です
+// 会社名、部署名・役職、お名前という並びに変更
+	$columns = array(
+'post_date' => '投稿日時',
+'post_modified' => '更新日時',
+'post_title' => '件名',
+'companyname' => '会社名',
+'postname' => '部署名・役職',
+'username' => 'お名前',
+'username_kana' => 'ふりがな',
+'email' => 'メールアドレス',
+'tel1' => '電話番号',
+'zip' => '郵便番号',
+'pref' => '都道府県',
+'addr' => '市区町村',
+'building' => '丁目番地・ビル名',
+'check' => 'お問い合わせ項目',
+'comment' => 'お問い合わせ内容詳細',
+'file' => 'ファイル添付',
+'date' => '希望日',
+);
+return $columns;
+}
+add_filter( 'mwform_inquiry_data_columns-mwf_2598', 'my_mwform_inquiry_data_columns' );*/
+
+```
+↓スノモン用…？
+```
+/*-------------------------------------------*/
+/* MW WP Form 問い合わせデータ並び替え
+/*-------------------------------------------*/
+/**
+* カラムを並び替える、削除する
+*
+* @param array $columns カラム名の配列
+* @return array
+*/
+/*function my_mwform_inquiry_data_columns( $columns ) {
+// 設定している項目順に表示させる設定です
+// 会社名、部署名・役職、お名前という並びに変更
+	$columns = array(
+'post_date' => '投稿日時',
+'post_modified' => '更新日時',
+'post_title' => '件名',
+'companyname' => '会社名',
+'postname' => '部署名・役職',
+'username' => 'お名前',
+'username_kana' => 'ふりがな',
+'email' => 'メールアドレス',
+'tel1' => '電話番号',
+'zip' => '郵便番号',
+'pref' => '都道府県',
+'addr' => '市区町村',
+'building' => '丁目番地・ビル名',
+'check' => 'お問い合わせ項目',
+'comment' => 'お問い合わせ内容詳細',
+'file' => 'ファイル添付',
+'date' => '希望日',
+);
+return $columns;
+}
+add_filter( 'mwform_inquiry_data_columns-mwf_2598', 'my_mwform_inquiry_data_columns' );*/
+
+```
+
+## css
+```
+/* ＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝
+ * メールフォーム 
+ * ＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝ */
+.contactform-entext {
+    display: block;
+    font-size: var(--vk-size-text-xs);
+    font-weight: normal;
+}
+.contactform-table th {
+	border: 1px solid var(--vk-color-border-hr);
+	font-size: var(--vk-size-text);
+	text-align: left;
+	position: relative;
+	background: #f9f9f9;
+	background-clip: padding-box;
+	width: 30%;
+}
+.contactform-table td {
+	border: 1px solid var(--vk-color-border-hr);
+}
+th.contactform-required::after,
+th.contactform-unrequired::after {
+	display: block;
+	position: absolute;
+	font-size: 14px;
+	font-weight: normal;
+	right: 10px;
+	top: 50%;
+	transform: translateY(-50%);
+	padding: 5px 10px;
+	line-height: 1;
+	border-radius: 3px;
+}
+th.contactform-required::after {
+	content: '必須';
+	background: #f55555;
+	color: #fff;
+}
+th.contactform-unrequired::after {
+	content: '任意';
+	background: #eee;
+	color: #888;
+}
+dl.contactform-addlist {
+	margin: 0;
+}
+dl.contactform-addlist dt:not(:first-child) {
+	margin-top: 1em;
+}
+dl.contactform-addlist dt {
+	font-size: var(--vk-size-text-sm);
+	color: #333;
+	font-weight: normal;
+}
+span.mwform-file-delete {
+	display: inline-block;
+	width: 30px;
+	height: 30px;
+	background: #eee;
+	line-height: 30px;
+	text-align: center;
+	border-radius: 50px;
+	font-size: 22px;
+	vertical-align: revert;
+	margin-left: 3rem;
+	transition: .1s;
+}
+span.mwform-file-delete:hover {
+	background: #aaa;
+	color: #fff;
+}
+input[type="file"] {
+	font-size: 1rem;
+}
+select {
+	/* セレクトボックスに三角じるし */
+	background: #fff url(data:image/gif;base64,R0lGODlhFAAUALMAAP///7a2tv7+/vv7+/b29u7u7uXl5dra2tDQ0MfHx8bGxr+/v7q6ure3t////wAAACH5BAUAAA4ALAAAAAAUABQAAARIEMhJq704680lCmAojiEyLGQaLgNQNCrZFNMRjwclKDeoCBUC48YgXAw3Q+aTQmhOJNbmJZp1bKFcR5DwATsAYRE8MSjJ6HQEADs=) no-repeat calc(100% - 10px);
+	background-size: 15px;
+	padding-right: 40px !important;
+}
+p.contactform-note {
+	font-size: var(--vk-size-text-sm);
+	color: #777;
+	margin: 0;
+}
+/* お問い合わせフォームの調整　タブレット以下 */
+@media (max-width:991px) {
+	.contactform table,
+	.contactform tbody,
+	.contactform th,
+	.contactform td,
+	.contactform tr {
+		display: block;
+	}
+	.contactform th,
+	.contactform td {
+		width: 100% !important;
+	}
+	.contactform th {
+		border-width: 1px 0 0 0;
+	}
+	.contactform td {
+		border-width: 0;
+	}
+}
+/* フォームの送信ボタン */
+input.btn {
+	font-family: inherit;
+}
+input[type=submit] {
+	margin-top: 2rem;
+	border: none;
+}
+/* 送信戻るボタン */
+input[name=submitBack] {
+	background: transparent;
+	color: var(--vk-color-primary);
+	border: 1px solid var(--vk-color-primary-dark);
+	margin-right: 2em;
+}
+/*バリデーション＆エラー＆確認画面*/
+.form-errored input:not([type="submit"]),
+.form-errored select,
+.form-errored textarea {
+	border: solid 1px #f22 !important;
+	background: #fbeeee;
+}
+.mw_wp_form .error::before {
+	content: '\f06a';
+	font-family: "Font Awesome 6 Free";
+	font-weight: 600;
+	padding-right: .5em;
+}
+.mw_wp_form_preview .contactform-preview-hidden {
+	display: none;
+}
+
+
+/* ＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝
+ * MW WP Formカスタマイズ予約フォーム用　
+ * ＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝ */
+.mw_wp_form input[type="email"],
+.mw_wp_form input[type="tel"],
+.mw_wp_form input[type="text"],
+.mw_wp_form textarea {
+	padding: 1em;
+	font-size: 15px;
+	font-family: unset;
+}
+
+.mw_wp_form select {
+	display: block;
+	position: relative;
+	width: 80%;
+	height: 3.5em;
+	font-size: 14px;
+	border: 1px solid #ccc;
+	border-radius: 4px;
+	overflow: hidden;
+	padding: 0 10px;
+	font-family: unset;
+}
+.mwform-checkbox-field label,
+.mwform-radio-field label {
+	cursor: pointer;
+}
+/*ハイフンなしで入力！ 非表示*/
+#autozip {
+	display:none !important;
+}
+/* ＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝
+ * デートピッカー上書きCSS
+ * ＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝ */
+#ui-datepicker-div {
+    font-family: unset;
+}
+#ui-datepicker-div .ui-datepicker-header {
+	background: #eee;
+	border: none;
+	border-radius: 0;
+	padding: 15px 0;
+}
+#ui-datepicker-div .ui-datepicker-header a,
+#ui-datepicker-div .ui-datepicker-header select {
+    cursor: pointer;
+}
+#ui-datepicker-div {
+	padding: 0;
+}
+#ui-datepicker-div select.ui-datepicker-month,
+#ui-datepicker-div select.ui-datepicker-year {
+	padding: 5px;
+	width: 50%;
+	margin: 0;
+}
+#ui-datepicker-div .ui-datepicker-title {
+	display: flex;
+	align-items: baseline;
+	justify-content: space-between;
+	font-size: 1rem;
+}
+#ui-datepicker-div .ui-datepicker-prev,
+#ui-datepicker-div .ui-datepicker-next {
+	top: calc(50% - 0.9em);
+}
+#ui-datepicker-div th.ui-datepicker-week-end:last-child {
+	color: blue;
+}
+#ui-datepicker-div th.ui-datepicker-week-end:first-child {
+	color: red;
+}
+#ui-datepicker-div .ui-state-default,
+#ui-datepicker-div .ui-widget-content .ui-state-default,
+#ui-datepicker-div .ui-widget-header .ui-state-default,
+.ui-button {
+	border: none;
+	background: none;
+	text-align: center;
+	line-height: 2;
+	border-radius: 50px;
+	transition: .1s ease-out;
+}
+#ui-datepicker-div a.ui-state-default.ui-state-active {
+	background: var(--vk-color-primary) !important;
+	color: #fff;
+}
+#ui-datepicker-div a.ui-state-default:hover,
+#ui-datepicker-div a.ui-state-default:active,
+#ui-datepicker-div a.ui-state-default:focus {
+	background: #eee;
+}
+```
+```
+/* フォーム要素 */
+.smf-form input,
+.smf-form textarea{
+    font-family: unset !important;
+}
+/* SPメールフォーム拡大対策 */
+@media (max-width: 992px) { 
+	input, textarea, select {
+		font-size:16px !important;
+	}
+}
+.smf-control-description {
+    font-size: 0.875rem;
+    opacity: 0.8;
+}
+
+@media (max-width: 992px) { 
+	.smf-item__col.smf-item__col--label {
+		margin-bottom:1rem;
+	}
+}
+.device-pc form.snow-monkey-form:not([data-screen="confirm"]) .smf-item__label {
+    padding-top: 0.5rem;
+}
+.smf-item__label__text {
+    font-weight: bold;
+}
+.smf-item__label::after {
+    float: right;
+/*     margin-right: 1rem; */
+    background: #eee;
+	color: #777;
+    font-size: 0.875rem;
+    padding: 3px 9px;
+    border-radius: 3px;
+}
+.is-style-smf-required .smf-item__label::after {
+    content: '必須';
+    background: #f44;
+    color: #fff;
+}
+.is-style-smf-unrequired .smf-item__label::after {
+	content:'任意';
+}
+/* ラジオ・チェック・セレクト */
+.smf-checkbox-control,
+.smf-radio-button-control{
+    cursor: pointer;
+	display: block;
+    padding: 0.5em;
+	position:relative;
+}
+input.smf-checkbox-control__control,
+input.smf-radio-button-control__control {
+    pointer-events: none;
+    accent-color: var(--vk-color-primary);
+}
+.smf-radio-buttons-control--horizontal .smf-radio-buttons-control__control,
+.smf-checkboxes-control--horizontal .smf-checkboxes-control__control {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem 2rem;
+}
+span.smf-checkbox-control input:checked+span::before, span.smf-radio-button-control input:checked+span::before {
+    background: var(--vk-color-primary);
+    opacity: 0.1;
+    border-radius: var(--vk-size-radius);
+    pointer-events: none;
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+}
+/* 住所 */
+.form-address-group {
+    gap: 0 1em;
+}
+input#zip,select#pref {
+    min-width: 260px;
+}
+form.snow-monkey-form[data-screen="confirm"] .smf-addressbox .wp-block-group__inner-container{
+    display: flex !important;
+    flex-direction: row !important;
+    gap: 1em;
+}
+form.snow-monkey-form[data-screen="confirm"] .smf-addressbox .wp-block-group__inner-container *:first-child{
+    min-width:120px;
+}
+/* ファイル */
+input.smf-file-control__control {
+    display: none;
+}
+span.smf-file-control__label {
+    border: solid 1px var(--vk-color-primary);
+    border-radius: var(--vk-size-radius);
+    color: var(--vk-color-primary);
+    font-size: 0.875em;
+    padding: 0.3em 0.8em;
+    margin-right: 0.5rem;
+    cursor: pointer;
+}
+span.smf-file-control__clear {
+    opacity: 0.4;
+    font-size: 0.8em;
+    border: solid 1px;
+    padding: 0.1em 0.4em;
+    margin-left: 2rem;
+    cursor: pointer;
+}
+.smf-file-control.smf-file-control--set span.smf-file-control__filename--no-file {
+    display: none; /* ファイルがセットされているとき「選択されていません」を表示しない */
+}
+.smf-file-control:not(.smf-file-control--set) span.smf-file-control__filename--has-file {
+    display: none; /* ファイルがセットされていないとき「ファイル名」を表示しない */
+}
+/* 同意 */
+.smf-form--simple-table .wp-block-snow-monkey-forms-item.smf-agreement {
+    border: none;
+    padding: 1rem 0;
+}
+.smf-agreement span.smf-checkbox-control {
+    width: fit-content;
+    margin: auto;
+}
+.smf-agreement span.smf-checkbox-control input:checked+span::before{
+    content:none;
+}
+form.snow-monkey-form[data-screen="confirm"] .smf-agreement {
+    display: none;
+}
+
+.smf-form {
+    margin-bottom:var(--vk-margin-block-bottom);
+}
+.smf-button-control button[type="submit"] {
+    font-size: 1rem;
+    background-color: var(--vk-color-primary);
+    border-radius: var(--vk-size-radius);
+    color: #fff;
+    padding: 0.5em 2em;
+    min-height: 50px;
+}
+.smf-button-control button[type="submit"]:hover {
+    background-color: var(--vk-color-primary-dark);
+}
+.smf-button-control button[data-action="back"],
+.smf-button-control button[data-action="back"]:hover{
+    border: solid 1px var(--vk-color-primary);
+    color: var(--vk-color-primary);
+    background: #fff;
+}
+.smf-button-control button[data-action="back"]:hover {
+    filter: brightness(0.9) grayscale(1);
+    border-color: transparent;
+}
+/* スタイル：テーブル */
+.smf-form--simple-table .wp-block-snow-monkey-forms-item {
+    border-bottom: solid 1px #ddd;
+    padding: 1rem 1rem;
+    gap:1rem;
+}
+/* スタイル：レター */
+.smf-form--letter .wp-block-snow-monkey-forms-item {
+    display: flex;
+    gap: 1rem;
+    flex-direction: column;
+    padding: 0 0 2rem;
+}
+/* 入力不備 */
+.smf-form .smf-item [data-invalid="1"]{
+    border-color: #ff4444;
+    border-width:3px;
+}
+.smf-error-messages {
+    font-weight: bold;
+    position: relative;
+    color:#ff4444;
+}
+.smf-error-messages::before {
+    content: '\f06a';
+    font-family: 'Font Awesome 5 Free';
+    font-weight: 600;
+    padding-right: 0.5em;
+}
+/*完了画面*/
+.smf-complete-content p.has-background {
+  padding: 0.25rem 1rem;
+}
+```
