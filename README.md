@@ -1,10 +1,117 @@
-# MWform
+# MWform再導入用メモ
 ## プラグイン
 - MW WP Form バージョン5.0.6
 - reCAPTCHA for MW WP Form　バージョン 1.1.2
 
 ## コンテンツ
+```
+<div id="errorBlock" class="err_block" style="display: none;">
+<p class="err_tit">入力内容に誤りがあります。お手数ですが再度ご入力ください。</p>
 
+<div id="errorMessage">[mwform_error keys="companyname"]
+[mwform_error keys="postname"]
+[mwform_error keys="username"]
+[mwform_error keys="username_kana"]
+[mwform_error keys="email"]
+[mwform_error keys="email2"]
+[mwform_error keys="tel"]
+[mwform_error keys="zip,pref,addr,building"]
+[mwform_error keys="check"]
+[mwform_error keys="comment"]
+[mwform_error keys="file"]
+[mwform_error keys="date"]
+[mwform_error keys="time"]</div>
+</div>
+<div class="contactform">
+<table class="contactform-table">
+<tbody>
+<tr>
+<th class="contactform-required">登録状況<span class="contactform-entext">Subject</span></th>
+<td class="outer_know">[mwform_radio name="check2" children="会員,非会員" separator="," vertically="true"]</td>
+</tr>
+<tr>
+<th class="contactform-unrequired">会社名<span class="contactform-entext">Company name</span></th>
+<td>[mwform_text name="companyname" id="companyname" size="60" placeholder="例：ABC株式会社"]</td>
+</tr>
+<tr>
+<th class="contactform-unrequired">部署名・役職<span class="contactform-entext">Post name</span></th>
+<td>[mwform_text name="postname" id="postname" size="60" placeholder="例：総務部"]</td>
+</tr>
+<tr>
+<th class="contactform-required">お名前<span class="contactform-entext">Your name</span></th>
+<td>[mwform_text name="username" id="username" size="60" placeholder="例：山田 太郎"]
+<p class="contactform-note contactform-preview-hidden">※　ハンドルネーム可能</p>
+</td>
+</tr>
+<tr>
+<th class="contactform-unrequired">ふりがな<span class="contactform-entext">Furigana</span></th>
+<td>[mwform_text name="username_kana" id="username_kana" size="60" placeholder="例：やまだ たろう"]</td>
+</tr>
+<tr>
+<th class="contactform-required">メールアドレス<span class="contactform-entext">E-mail</span></th>
+<td>[mwform_text name="email" id="email" size="60" placeholder="例：yamada@example.com"]
+<div class="contactform-preview-hidden">
+<p class="contactform-note">※　お問い合わせ内容のお控えを送りいたします。確認のため再度ご入力ください。</p>
+<p class="mb-0">[mwform_text name="email2" id="email2" size="60"]</p>
+
+</div></td>
+</tr>
+<tr>
+<th class="contactform-unrequired">電話番号<span class="contactform-entext">Telephone number</span></th>
+<td>[mwform_text name="tel" id="tel" size="30"]</td>
+</tr>
+<tr>
+<th class="contactform-required">住所<span class="contactform-entext">Address</span></th>
+<td>
+<dl class="contactform-addlist">
+ 	<dt class="contactform-preview-hidden">郵便番号</dt>
+ 	<dd>[mwform_text name="zip" id="zip" size="7" placeholder="1234567"]</dd>
+ 	<dt class="contactform-preview-hidden">都道府県</dt>
+ 	<dd>[mwform_select name="pref" id="pref" class="pref" children=",北海道,青森県,岩手県,宮城県,秋田県,山形県,福島県,茨城県,栃木県,群馬県,埼玉県,千葉県,東京都,神奈川県,新潟県,富山県,石川県,福井県,山梨県,長野県,岐阜県,静岡県,愛知県,三重県,滋賀県,京都府,大阪府,兵庫県,奈良県,和歌山県,鳥取県,島根県,岡山県,広島県,山口県,徳島県,香川県,愛媛県,高知県,福岡県,佐賀県,長崎県,熊本県,大分県,宮崎県,鹿児島県,沖縄県,海外"]</dd>
+ 	<dt class="contactform-preview-hidden">市区町村</dt>
+ 	<dd>[mwform_text name="addr" id="addr" placeholder="例：千代田区"]</dd>
+ 	<dt class="contactform-preview-hidden">丁目番地・ビル名</dt>
+ 	<dd>[mwform_text name="building" id="building" placeholder="例：1-1-1　ABCビル101号室"]</dd>
+</dl>
+</td>
+</tr>
+<tr>
+<th class="contactform-unrequired">お問い合わせ項目
+（複数選択可能）<span class="contactform-entext">Subject</span></th>
+<td class="outer_know">[mwform_checkbox name="check" children="項目1,項目2,項目3,項目4,項目5,項目6,項目7" separator="," vertically="true"]</td>
+</tr>
+<tr>
+<th class="contactform-unrequired">お問い合わせ項目
+（複数選択不可・必須）<span class="contactform-entext">Subject</span></th>
+<td>[mwform_radio name="check2" children="項目1,項目2,項目3,項目4,項目5,項目6" separator="," vertically="false"]</td>
+</tr>
+<tr>
+<th class="contactform-unrequired">お問い合わせ内容<span class="contactform-entext">Inquiry body</span></th>
+<td>[mwform_textarea name="comment" id="comment" class="comment" cols="90" rows="14"]</td>
+</tr>
+<tr>
+<th class="contactform-ununrequired">ファイル添付<span class="contactform-entext">Attachment file</span></th>
+<td>[mwform_file name="file" class="contactform-flie"]</td>
+</tr>
+<tr>
+<th class="contactform-ununrequired">希望日（日付ピッカー）<span class="contactform-entext">Date</span></th>
+<td>[mwform_datepicker name="date" size="30" placeholder="日付を選択"]</td>
+</tr>
+<tr>
+<th class="contactform-unrequired">希望時間<span class="contactform-entext">Time</span></th>
+<td>[mwform_select name="time" children=":時刻を選択,10：00,10：30,11：00,11：30,12：00,12：30,13：00,13：30,・・・" post_raw="true"]</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="block text-center">[mwform_backButton value="戻る" class="btn"][mwform_submitButton name="submit" confirm_value="入力内容を確認する" submit_value="送信する" class="btn"]</div>
+<script type="text/javascript">
+//電話番号フィールドのtype属性をtelに変更する
+window.onload = function() {
+ document.getElementById("tel").setAttribute("type","tel");
+};
+</script>
+```
 
 ## function.php
 ```
